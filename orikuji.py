@@ -14,46 +14,70 @@ import datetime
 
 def main():
     """
-    
     """
 
     current_directory = os.getcwd()
     text_file = current_directory + os.sep + 'fortune.txt'
     script_file = current_directory + os.sep + 'YourFortune.txt'
 
-    #read_file(text_file)
-    script_list = make_omikuji()
+    omikuji_messege = read_file(text_file)
+    messege_list = make_fortune_messeges(omikuji_messege)
+    script_list = make_omikuji(messege_list)
     write_file(script_file, script_list)
 
     return 0
 
-#def read_file(file_name):
+def read_file(file_name):
     """
     ファイルを読み込んで、おみくじのメッセージをリストに入れる
     """
 
-
     fortune_messeges = []
+
     #ファイルを読み込む
     with open(file_name, 'r', encoding='utf-8') as file:
         for a_line in file:
-            a_string = a_line.split()[0]
+            a_string = a_line.split()
             fortune_messeges.append(a_string)
-
+        #print(fortune_messeges)
     return fortune_messeges
 
-#def make_fortune_messeges(messege_list):
+def make_fortune_messeges(messege_list):
+    """
+    文字列を並び替えておみくじの内容を縦書きに見えるようなリストを作る
     """
 
-    
-
     fortune_messege = random.sample(messege_list, 3)
+    word_list = []
+    script_list = []
 
-    string_list = fortune_messege.split()"""
+    for omikuji_messege in fortune_messege:
+        for a_messege in omikuji_messege:
+            a_list = list(a_messege)
+        word_list.append(a_list)
+
+    word_list_first, word_list_second, word_list_thired = word_list
+
+    max_word_namber = max(len(word_list_first), len(word_list_second), len(word_list_thired))
+
+    word_list_first = padding(word_list_first, max_word_namber)
+    word_list_second = padding(word_list_second, max_word_namber)
+    word_list_thired = padding(word_list_thired, max_word_namber)
+
+    for word_first, word_second, word_thired in zip(word_list_first, word_list_second, word_list_thired):
+        script_list.append(' '.join([word_first, word_second, word_thired]))
+
+    return script_list
+    
+def padding(word_list, number):
+    while number!=len(word_list):
+        word_list.append('＊')
+    
+    return word_list
 
 
 
-def make_omikuji():
+def make_omikuji(omikuji_messege):
     """
     おみくじのテキストファイルに書かれるスクリプトのリストを作る
     """
@@ -73,7 +97,6 @@ def make_omikuji():
     script_list.extend([line, dot+random.choice(omikuji_list)+dot,'========='])
     script_list.append('')
 
-
     
 
     return script_list
@@ -91,7 +114,6 @@ def write_file(file_name, script_list):
         #ファイルに書き出す
         with open(file_name, 'w', encoding="utf-8") as a_file:
             a_file.write(a_string)
-
 
 if __name__ == '__main__':
     import sys
