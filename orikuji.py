@@ -14,11 +14,12 @@ import datetime
 
 def main():
     """
+    おみくじをtxtファイルに出力するメインプロクラム
     """
 
     current_directory = os.getcwd()
     text_file = current_directory + os.sep + 'fortune.txt'
-    script_file = current_directory + os.sep + 'YourFortune.txt'
+    script_file = current_directory + os.sep + 'YourOrikuji.txt'
 
     omikuji_messege = read_file(text_file)
     messege_list = make_fortune_messeges(omikuji_messege)
@@ -65,16 +66,19 @@ def make_fortune_messeges(messege_list):
     word_list_thired = padding(word_list_thired, max_word_namber)
 
     for word_first, word_second, word_thired in zip(word_list_first, word_list_second, word_list_thired):
-        script_list.append(' '.join([word_first, word_second, word_thired]))
+        script_list.append('\x20'+'\x20'.join([word_first, word_second, word_thired]))
 
     return script_list
     
+
 def padding(word_list, number):
+    """
+    文字数を揃えるために＊を追加する
+    """
     while number!=len(word_list):
         word_list.append('＊')
     
     return word_list
-
 
 
 def make_omikuji(omikuji_messege):
@@ -95,9 +99,8 @@ def make_omikuji(omikuji_messege):
     script_list.append('')
 
     script_list.extend([line, dot+random.choice(omikuji_list)+dot,'========='])
+    script_list.append('\n'.join(omikuji_messege) + '\n' + line)
     script_list.append('')
-
-    
 
     return script_list
 
