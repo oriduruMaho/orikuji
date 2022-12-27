@@ -10,8 +10,6 @@ __author__ = 'oriduru Maho'
 import os
 import random
 import datetime
-import requests
-
 
 def main():
     """
@@ -100,7 +98,8 @@ def make_omikuji(omikuji_messege):
     script_list.append('')
 
     script_list.extend([line, dot+random.choice(omikuji_list)+dot,'========='])
-    script_list.append('\n'.join(omikuji_messege) + '\n' + line)
+    script_list.append('\n'.join(omikuji_messege))
+    script_list.append(line)
     script_list.append('')
 
     return script_list
@@ -112,7 +111,7 @@ def write_file(file_name, script_list):
     """
 
     a_string = "\n".join(script_list)
-    
+
     if file_name is None:
         print(a_string)
     else:
