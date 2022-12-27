@@ -10,6 +10,7 @@ __author__ = 'oriduru Maho'
 import os
 import random
 import datetime
+import requests
 
 
 def main():
@@ -111,6 +112,7 @@ def write_file(file_name, script_list):
     """
 
     a_string = "\n".join(script_list)
+    
     if file_name is None:
         print(a_string)
     else:
