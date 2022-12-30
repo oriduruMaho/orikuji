@@ -22,13 +22,14 @@ void omikujiDraw(Script *pS) {
     time_t t = time(NULL);
     struct tm *tm = localtime(&t);
 
+    double xp[4] = {5, 5, 195, 195};
+    double yp[4] = {595, 5, 5, 595};
+
     HgSetFillColor(HG_RED);
     HgSetColor(HG_RED);
-    HgBoxFill(5, 510, 190, 85, 0);
-    HgMoveTo(5, 595);
-    HgLineTo(5, 5);
-    HgLineTo(195, 5);
-    HgLineTo(195, 595);
+    HgBoxFill(10, 510, 180, 80, 0);
+    HgPolygon(4, xp, yp);
+    HgLine(10, 505, 190, 505);
 
     HgSetFontByName("ヒラギノ丸ゴ ProN", 40);
     HgSetColor(HG_WHITE);
@@ -37,17 +38,23 @@ void omikujiDraw(Script *pS) {
     HgTextSize(&x, &y, "＊%s＊", omikuji[num]);
     HgText(100 - x / 2, 530, "＊%s＊", omikuji[num]);
 
-    HgSetColor(HG_BLACK);
-    HgSetFontByName("游教科書体 ボールド", 10);
+    HgSetColor(HG_DRED);
+    HgSetFillColor(HgGrayA(1, 0.8));
+
+    HgSetFontByName("游教科書体", 10);
     HgTextSize(&x, &y, "%04d年%02d月%02d日（%s）%02d時%02d分%02d秒\n",
                tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday,
                days[tm->tm_wday], tm->tm_hour, tm->tm_min, tm->tm_sec);
+    HgBoxFill(100 - x / 2, y, x, 10, 0);
     HgText(100 - x / 2, 10, "%04d年%02d月%02d日（%s）%02d時%02d分%02d秒\n",
            tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday, days[tm->tm_wday],
            tm->tm_hour, tm->tm_min, tm->tm_sec);
-    HgSetFontByName("游教科書体 ボールド", 20);
+
+    HgSetFontByName("游教科書体", 20);
     for (i = 0; i < 3; i++) {
         num = random() % LAST_LINE_NUM;
+        HgBoxFill(45 + i * 50, 450 - 20 * (strlen(pS[num].words) / 3) + 40, 20,
+                  20 * (strlen(pS[num].words) / 3), 0);
         for (j = 0; j < strlen(pS[num].words) / 3; j++) {
             HgText(45 + i * 50, 450 - j * 20, "%c%c%c\n", pS[num].words[j * 3],
                    pS[num].words[j * 3 + 1], pS[num].words[j * 3 + 2]);
@@ -121,7 +128,7 @@ void pineDraw(int x, int y) {
     HgOvalFill(x + 10, y, 20, 8, 0, 0);
     HgCircleFill(x + 10, y + 5, 10, 0);
     for (i = 0; i < 3; i++) {
-        HgLine(x + 5 + i * 5, y-2 , x + i * 10, y + 5 + i % 2 * 3);
+        HgLine(x + 5 + i * 5, y - 2, x + i * 10, y + 5 + i % 2 * 3);
     }
 }
 
