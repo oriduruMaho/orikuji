@@ -18,6 +18,7 @@ typedef struct Script {
 
 // レイヤ分けの変数
 int layer1, layer2;
+doubleLayer layers;
 
 // おみくじの内容を描く関数
 void omikujiDraw(Script *pS) {
@@ -68,7 +69,7 @@ void omikujiDraw(Script *pS) {
     HgSetFontByName("游教科書体", 20);
     for (i = 0; i < 3; i++) {
         num = random() % LAST_LINE_NUM;
-        HgBoxFill(45 + i * 50, 450 - 20 * (strlen(pS[num].words) / 3) + 40, 20,
+        HgBoxFill(45 + i * 50, 450 - 20 * ((strlen(pS[num].words) / 3) - 2), 20,
                   20 * (strlen(pS[num].words) / 3), 0);
         for (j = 0; j < strlen(pS[num].words) / 3; j++) {
             HgText(45 + i * 50, 450 - j * 20, "%c%c%c\n", pS[num].words[j * 3],
@@ -80,33 +81,36 @@ void omikujiDraw(Script *pS) {
 // 耳が動くうさぎさん描く関数
 void rabitDraw(void) {
     hgevent *event;
-    int i, dx, key;
+    int i, j, dx, key;
     // うさぎさん描くための座標入り配列
     double x[14] = {80,  65,  71,  82,  91,  112, 120,
                     133, 140, 123, 134, 125, 88,  71};
     double y[14] = {98,  146, 165, 152, 102, 104, 148,
                     163, 146, 98,  74,  53,  49,  72};
+    int face_x[4] = {90, 115, 75, 130};
     dx = 1;
 
     // お目々とかほっぺとか
     HgWSetFillColor(layer2, HG_BLACK);
     HgWCircle(layer2, 105, 63, 1);
-    HgWOvalFill(layer2, 90, 80, 3.5, 10, 0, 0);
-    HgWOvalFill(layer2, 115, 80, 3.5, 10, 0, 0);
-    HgWSetFillColor(layer2, HG_WHITE);
-    HgWCircleFill(layer2, 92.5, 85, 2, 0);
-    HgWCircleFill(layer2, 117, 85, 2, 0);
-    HgWSetFillColor(layer2, HG_PINK);
-    HgWOvalFill(layer2, 75, 70, 10, 5, 0, 0);
-    HgWOvalFill(layer2, 130, 70, 10, 5, 0, 0);
-    HgWSetFillColor(layer1, HG_WHITE);
+    for (i = 0; i < 2; i++) {
+        for (j = 0; j < 2; j++) {
+            HgWOvalFill(layer2, face_x[i * 2 + j], 80 - 10 * i, 3.5 + 6.5 * i,
+                        10 - 5 * i, 0, 0);
+        }
+        HgWSetFillColor(layer2, HG_WHITE);
+        HgWCircleFill(layer2, 92 + 25 * i, 85, 2, 0);
+        HgWSetFillColor(layer2, HG_PINK);
+    }
 
+    HgWSetFillColor(layer1, HG_WHITE);
     for (;;) {
         // キー入力で止まる
         event = HgEventNonBlocking();
         if (event != NULL) {
             break;
         }
+        layer1 = HgLSwitch(&layers);
         HgLClear(layer1);
         HgWPolygonFill(layer1, 14, x, y, 1);  // ウサギさんの輪郭
 
@@ -170,12 +174,13 @@ int main(void) {
     fclose(fp);
 
     HgOpen(200, 600);
+    layers = HgWAddDoubleLayer(0);
     layer1 = HgWAddLayer(0);
     layer2 = HgWAddLayer(0);
     HgSetTitle("おりくじ");
     HgSetEventMask(HG_KEY_DOWN);
 
-     HgSetWidth(1.5);
+    HgSetWidth(1.5);
 
     // 松と梅を描く
     for (i = 0; i < 10; i++) {
