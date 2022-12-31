@@ -4,6 +4,7 @@
 */
 
 #include <handy.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -13,7 +14,7 @@
 
 // 文字入れとくための構造体
 typedef struct Script {
-    char words[100];
+    char words[200];
 } Script;
 
 // レイヤ分けの変数
@@ -151,7 +152,17 @@ void pineDraw(int x, int y) {
     HgOvalFill(x + 10, y, 20, 8, 0, 0);
     HgCircleFill(x + 10, y + 5, 10, 0);
     for (i = 0; i < 3; i++) {
-        HgLine(x + 5 + i * 5, y - 2, x + i * 10, y + 5 + i % 2 * 3);
+        HgLine(x + 5 + i * 5, y - 4, x + i * 10, y + 5 + i % 2 * 3);
+    }
+}
+
+// 竹を描く関数
+void bambooDraw(int x, int y) {
+    int i;
+    HgSetFillColor(HG_GREEN);
+    for (i = 0; i < 3; i++) {
+        HgOvalFill(x + i * 10, y, 10, 5, (i + 1) * M_PI / 4.0, 0);
+        HgLine(x - 5 + i * 15, y - 5, x + 5 + i * 5, y + 5);
     }
 }
 
@@ -182,13 +193,15 @@ int main(void) {
 
     HgSetWidth(1.5);
 
-    // 松と梅を描く
+    // 松竹梅を描く
     for (i = 0; i < 10; i++) {
         for (j = 0; j < 3; j++) {
-            if ((i + j) % 2 == 0)
+            if ((i + j) % 3 == 0)
                 plumDraw(25 + 70 * j, 35 + 50 * i);
-            else
+            else if ((i + j) % 3 == 1)
                 pineDraw(25 + 68 * j, 30 + 50 * i);
+            else
+                bambooDraw(25 + 68 * j, 30 + 50 * i);
         }
     }
     omikujiDraw(scripts);  // おみくじ描く
