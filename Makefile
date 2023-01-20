@@ -1,6 +1,6 @@
-VERSION := 0.0.1								# バージョン
-TARGET := orikuji 							# バージョン情報を含む実行ファイルの名前
-CC := hgcc 											# コンパイラを指定する
+VERSION := 0.0.1	# バージョン
+TARGET := orikuji	# バージョン情報を含む実行ファイルの名前
+CC := hgcc	# コンパイラを指定する
 CFLAGS := -Wall -I "./include"	# コンパイラに与えるオプションを指定する
 
 # デフォルト（makeにオプションを与えなかったとき）のターゲット
