@@ -10,7 +10,10 @@
 #include <string.h>
 #include <time.h>
 
-#define LAST_LINE_NUM 44  // fortune.txtの最後-1行目の数字
+#define LAST_LINE_NUM 44 // fortune.txtの最後-1行目の数字
+
+char *unsei_fonts[] = {"メイリオ", "ヒラギノ丸ゴ ProN", "Osaka"};
+const int unsei_font_length = 3;
 
 // 文字入れとくための構造体
 typedef struct Script {
@@ -21,15 +24,18 @@ typedef struct Script {
 int layer1, layer2;
 doubleLayer layers;
 
+// フォールバックフォントが利用できるフォント指定関数
+void HgWSetFontWithFallBack(int wid, double size, int n, char **families);
+
 // おみくじの内容を描く関数
 void omikujiDraw(Script *pS) {
     char *omikuji[7] = {"大吉", "中吉", "小吉", "末吉",
-                        "吉",   "凶",   "大凶"};  // 運勢
-    int i, j, num;  // カウンタ変数と乱数のための変数
-    double x, y;    // x,y座標
+                        "吉",   "凶",   "大凶"}; // 運勢
+    int i, j, num; // カウンタ変数と乱数のための変数
+    double x, y;   // x,y座標
     const char *days[] = {
         "日", "月", "火", "水", "木", "金", "土",
-    };  // 曜日
+    }; // 曜日
     // 以下時刻を得るためのなんやかや
     time_t t = time(NULL);
     struct tm *tm = localtime(&t);
@@ -46,7 +52,7 @@ void omikujiDraw(Script *pS) {
     HgLine(10, 505, 190, 505);
 
     // おみくじの運勢描く
-    HgSetFontByName("ヒラギノ丸ゴ ProN", 40);
+    HgWSetFontWithFallBack(0, 40, unsei_font_length, unsei_fonts);
     HgSetColor(HG_WHITE);
     srandom(time(NULL));
     num = random() % 7;
@@ -113,7 +119,7 @@ void rabitDraw(void) {
         }
         layer1 = HgLSwitch(&layers);
         HgLClear(layer1);
-        HgWPolygonFill(layer1, 14, x, y, 1);  // ウサギさんの輪郭
+        HgWPolygonFill(layer1, 14, x, y, 1); // ウサギさんの輪郭
 
         // 耳を動かしてる
         if (x[2] > 78 || x[2] < 65) {
@@ -204,10 +210,22 @@ int main(void) {
                 bambooDraw(25 + 68 * j, 30 + 50 * i);
         }
     }
-    omikujiDraw(scripts);  // おみくじ描く
-    rabitDraw();           // うさぎさん描く
+    omikujiDraw(scripts); // おみくじ描く
+    rabitDraw();          // うさぎさん描く
 
     HgGetChar();
     HgClose();
     return 0;
+}
+
+#define STR_BUF_SIZE 100
+
+void HgWSetFontWithFallBack(int wid, double size, int n, char **families) {
+    for (int i = 0; i < n; i++) {
+        if (HgWSetFontByName(wid, families[i], size) == 0) {
+            return; // フォントを正しく設定できたタイミングでサブルーチンを終了
+        }
+    }
+    // すべてのフォールバックフォントが使えなかったときのフォント
+    HgWSetFont(wid, HG_H, size);
 }
